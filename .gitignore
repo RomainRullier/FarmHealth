@@ -1,15 +1,12 @@
 # Node.js
-backend/node_modules/
+node_modules/
 npm-debug.log
 yarn-debug.log
 yarn-error.log
 
 # Expo
-mobile-app/.expo/
-mobile-app/.expo-shared/
-
-# Python virtual environment
-python-server/env/
+.expo/
+.expo-shared/
 
 # macOS
 .DS_Store
@@ -57,3 +54,6 @@ mobile-app/web-build/
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# Python virtual environment
+python-server/env/
