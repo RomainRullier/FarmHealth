@@ -48,8 +48,8 @@ temp/
 *.tmp
 
 # Expo files
-.expo/
-web-build/
+.mobile/
+.web-build/
 
 # OS-specific files
 .DS_Store
