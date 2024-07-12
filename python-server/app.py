@@ -51,7 +51,11 @@ def predict(image_bytes):
     
     predicted_class_index = np.argmax(output_data[0])
     predicted_class_name = class_names[predicted_class_index]
-    return output_data[0].tolist(), predicted_class_name
+    
+    # Séparer le type de plante et la condition
+    plant_type, condition = predicted_class_name.split('___')
+    
+    return output_data[0].tolist(), plant_type, condition
 
 @app.post("/predict")
 async def predict_image(file: UploadFile = File(...)):
@@ -59,10 +63,11 @@ async def predict_image(file: UploadFile = File(...)):
         if file.content_type.startswith('image/'):
             image_bytes = await file.read()
             logging.info(f"Received file: {file.filename}, size: {len(image_bytes)} bytes")
-            predictions, predicted_class_name = predict(image_bytes)
+            predictions, plant_type, condition = predict(image_bytes)
             return JSONResponse(content={
                 "predictions": predictions,
-                "predicted_class": predicted_class_name,
+                "plant_type": plant_type,
+                "condition": condition,
                 "classes": class_names
             })
         else:

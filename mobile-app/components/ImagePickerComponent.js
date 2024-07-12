@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Button, Image, Text, StyleSheet, Platform } from 'react-native';
+import { View, Button, Image, Text, StyleSheet, Platform, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 
 export default function ImagePickerComponent() {
   const [image, setImage] = useState(null);
   const [prediction, setPrediction] = useState(null);
+  const userId = 1; // Remplacer par l'ID de l'utilisateur connecté
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -15,15 +16,10 @@ export default function ImagePickerComponent() {
       quality: 1,
     });
 
-    console.log("ImagePicker result: ", result);
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      const uri = result.assets[0].uri;
-      console.log("Selected image URI: ", uri);
+    if (!result.canceled) {
+      const uri = Platform.OS === 'web' ? result.assets[0].uri : result.assets[0].uri;
       setImage(uri);
       handlePrediction(uri);
-    } else {
-      console.error("No image selected or assets not available");
     }
   };
 
@@ -32,8 +28,6 @@ export default function ImagePickerComponent() {
       console.error("No image URI provided");
       return;
     }
-
-    console.log("Handling prediction for URI: ", imageUri);
 
     let filename = imageUri.split('/').pop();
     let match = /\.(\w+)$/.exec(filename);
@@ -58,39 +52,54 @@ export default function ImagePickerComponent() {
       });
     }
 
+    formData.append('user_id', userId);
+
     try {
       const response = await axios.post('http://192.168.1.164:5000/predict', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      setPrediction(response.data.predicted_class);
+      console.log('API Response:', response.data); // Log de la réponse API
+      setPrediction(response.data.prediction); // Stocker seulement l'objet prédiction
     } catch (error) {
       console.error("Error during prediction request: ", error);
     }
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Button title="Pick an image from camera roll" onPress={pickImage} />
       {image && <Image source={{ uri: image }} style={styles.image} />}
-      {prediction && <Text style={styles.prediction}>Prediction: {prediction}</Text>}
-    </View>
+      {prediction && (
+        <View style={styles.predictionContainer}>
+          <Text style={styles.predictionTitle}>Prediction:</Text>
+          <Text>Plant Type: {prediction.plant_type}</Text>
+          <Text>Condition: {prediction.condition}</Text>
+        </View>
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 20,
   },
   image: {
     width: 200,
     height: 200,
     marginTop: 20,
   },
-  prediction: {
+  predictionContainer: {
     marginTop: 20,
+    alignItems: 'center',
+  },
+  predictionTitle: {
     fontSize: 18,
+    fontWeight: 'bold',
   },
 });

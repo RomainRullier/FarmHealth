@@ -12,10 +12,6 @@ module.exports = (sequelize, DataTypes) => {
     image_url: {
       type: DataTypes.STRING
     },
-    timestamp: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW
-    },
     treatment_validated: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
