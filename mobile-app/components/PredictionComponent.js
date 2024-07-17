@@ -3,9 +3,9 @@ import { View, Image, Text, Button, StyleSheet, ScrollView, Platform } from 'rea
 import axios from 'axios';
 
 export default function PredictionComponent({ route, navigation }) {
-  const { imageUri } = route.params;
+  const { imageUri, analysisId: initialAnalysisId } = route.params;
   const [prediction, setPrediction] = useState(null);
-  const [analysisId, setAnalysisId] = useState(null);
+  const [analysisId, setAnalysisId] = useState(initialAnalysisId || null);
   const userId = 1; // Remplacer par l'ID de l'utilisateur connecté
 
   useEffect(() => {
@@ -54,8 +54,29 @@ export default function PredictionComponent({ route, navigation }) {
       }
     };
 
-    handlePrediction();
-  }, [imageUri]);
+    if (!initialAnalysisId) {
+      handlePrediction();
+    } else {
+      // Fetch existing analysis data
+      const fetchAnalysis = async () => {
+        try {
+          const response = await axios.get(`http://192.168.1.164:5000/history/${userId}`);
+          const analysis = response.data.find(item => item.id === initialAnalysisId);
+          if (analysis) {
+            setPrediction({
+              plant_type: analysis.plant_type,
+              condition: analysis.condition,
+              treatment_validated: analysis.treatment_validated
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching analysis data: ", error);
+        }
+      };
+
+      fetchAnalysis();
+    }
+  }, [imageUri, initialAnalysisId]);
 
   const handleValidation = async () => {
     try {
@@ -69,7 +90,9 @@ export default function PredictionComponent({ route, navigation }) {
       });
 
       alert('Traitement validé avec succès');
-      navigation.navigate('History'); // Naviguer vers l'historique après validation
+      // Mise à jour de l'état de la prédiction pour refléter la validation du traitement
+      setPrediction({ ...prediction, treatment_validated: true });
+      navigation.navigate('History', { refresh: true }); // Naviguer vers l'historique après validation et rafraîchir
     } catch (error) {
       console.error("Error during validation request: ", error);
     }
@@ -83,7 +106,18 @@ export default function PredictionComponent({ route, navigation }) {
           <Text style={styles.predictionTitle}>Prediction:</Text>
           <Text>Plant Type: {prediction.plant_type}</Text>
           <Text>Condition: {prediction.condition}</Text>
-          <Button title="Valider le traitement" onPress={handleValidation} />
+          {prediction && prediction.condition !== "healthy" && !prediction.treatment_validated && (
+            <>
+              <Button title="Appliquer le traitement recommandé" onPress={handleValidation} />
+              <Text style={styles.treatmentNotApplied}>Traitement non-appliqué</Text>
+            </>
+          )}
+          {prediction.condition === "healthy" && (
+            <Text style={styles.noTreatment}>Aucun traitement recommandé</Text>
+          )}
+          {prediction && prediction.condition !== 'healthy' && prediction.treatment_validated && (
+            <Text style={styles.treatmentApplied}>Traitement appliqué</Text>
+          )}
         </View>
       )}
     </ScrollView>
@@ -109,5 +143,23 @@ const styles = StyleSheet.create({
   predictionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  noTreatment: {
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'green',
+  },
+  treatmentApplied: {
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'green',
+  },
+  treatmentNotApplied: {
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'red',
   },
 });

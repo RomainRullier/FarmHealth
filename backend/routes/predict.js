@@ -3,9 +3,9 @@ const router = express.Router();
 const multer = require('multer');
 const axios = require('axios');
 const FormData = require('form-data');
-const fs = require('fs');
-const path = require('path');
 const { PlantAnalysis } = require('../models');
+const path = require('path');
+const fs = require('fs');
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -14,11 +14,6 @@ router.post('/', upload.single('image'), async (req, res) => {
     if (!req.file) {
       return res.status(400).send('No file uploaded.');
     }
-
-    // Save the image locally
-    const filename = `${Date.now()}_${req.file.originalname}`;
-    const filepath = path.join(__dirname, '../uploads/', filename);
-    fs.writeFileSync(filepath, req.file.buffer);
 
     const formData = new FormData();
     formData.append('file', req.file.buffer, {
@@ -33,19 +28,26 @@ router.post('/', upload.single('image'), async (req, res) => {
     });
 
     const { plant_type, condition } = response.data;
+    const imageFilename = `${Date.now()}_${req.file.originalname}`;
+    const imagePath = path.join(__dirname, '..', 'uploads', imageFilename);
 
-    // Assume user_id is provided in the request (adjust according to your logic)
+    // Sauvegarder l'image localement
+    fs.writeFileSync(imagePath, req.file.buffer);
+
+    const image_url = `/uploads/${imageFilename}`;
+
+    // Assumer que user_id est fourni dans la requête
     const user_id = req.body.user_id;
 
-    // Save analysis to database with the local image path
+    // Enregistrer l'analyse dans la base de données
     const analysis = await PlantAnalysis.create({
       plant_type: plant_type,
       condition: condition,
-      image_url: `/uploads/${filename}`, // Store the relative path to the image
+      image_url: image_url,
       user_id: user_id,
       createdAt: new Date(),
       updatedAt: new Date(),
-      treatment_validated: false // Default to not validated
+      treatment_validated: false // Par défaut, non validé
     });
 
     res.json({ analysis, prediction: response.data });

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 
-export default function HistoryComponent({ navigation }) {
+export default function HistoryComponent({ navigation, route }) {
   const [history, setHistory] = useState([]);
   const userId = 1; // Remplacer par l'ID de l'utilisateur connecté
 
   useEffect(() => {
     fetchHistory();
-  }, []);
+  }, [route.params?.refresh]);
 
   const fetchHistory = async () => {
     try {
@@ -22,11 +22,14 @@ export default function HistoryComponent({ navigation }) {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.historyItem}
-      onPress={() => navigation.navigate('Prediction', { imageUri: `http://192.168.1.164:5000${item.image_url}` })}
+      onPress={() => navigation.navigate('Prediction', { imageUri: `http://192.168.1.164:5000${item.image_url}`, analysisId: item.id })}
     >
+      <Image source={{ uri: `http://192.168.1.164:5000${item.image_url}` }} style={styles.image} />
       <Text>Plant Type: {item.plant_type}</Text>
       <Text>Condition: {item.condition}</Text>
-      <Text>Traitement Validé: {item.treatment_validated ? 'Oui' : 'Non'}</Text>
+      {item.condition !== 'healthy' && (
+        <Text>Traitement appliqué: {item.treatment_validated ? 'Oui' : 'Non'}</Text>
+      )}
       <Text>Date: {new Date(item.createdAt).toLocaleString()}</Text>
     </TouchableOpacity>
   );
@@ -37,8 +40,8 @@ export default function HistoryComponent({ navigation }) {
       <FlatList
         data={history}
         renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
-        contentContainerStyle={styles.listContent}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.list}
       />
     </View>
   );
@@ -56,16 +59,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  listContent: {
+  list: {
+    width: '100%',
     alignItems: 'center',
   },
   historyItem: {
-    marginTop: 10,
+    marginBottom: 20,
     padding: 10,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
     width: '90%',
     alignItems: 'center',
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginBottom: 10,
   },
 });
