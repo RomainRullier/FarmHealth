@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, Text, Button, StyleSheet, ScrollView, Platform } from 'react-native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwtDecode from 'jwt-decode';
 
 export default function PredictionComponent({ route, navigation }) {
   const { imageUri, analysisId: initialAnalysisId } = route.params;
   const [prediction, setPrediction] = useState(null);
   const [analysisId, setAnalysisId] = useState(initialAnalysisId || null);
-  const userId = 1; // Remplacer par l'ID de l'utilisateur connecté
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        const decodedToken = jwtDecode(token);
+        setUserId(decodedToken.userId);
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   useEffect(() => {
     const handlePrediction = async () => {
@@ -38,12 +52,12 @@ export default function PredictionComponent({ route, navigation }) {
         });
       }
 
-      formData.append('user_id', userId);
-
       try {
+        const token = await AsyncStorage.getItem('userToken');
         const response = await axios.post('http://192.168.1.164:5000/predict', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`
           },
         });
         console.log('API Response:', response.data); // Log de la réponse API
@@ -54,13 +68,18 @@ export default function PredictionComponent({ route, navigation }) {
       }
     };
 
-    if (!initialAnalysisId) {
+    if (!initialAnalysisId && userId) {
       handlePrediction();
-    } else {
+    } else if (initialAnalysisId && userId) {
       // Fetch existing analysis data
       const fetchAnalysis = async () => {
         try {
-          const response = await axios.get(`http://192.168.1.164:5000/history/${userId}`);
+          const token = await AsyncStorage.getItem('userToken');
+          const response = await axios.get(`http://192.168.1.164:5000/history/${userId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
           const analysis = response.data.find(item => item.id === initialAnalysisId);
           if (analysis) {
             setPrediction({
@@ -76,7 +95,7 @@ export default function PredictionComponent({ route, navigation }) {
 
       fetchAnalysis();
     }
-  }, [imageUri, initialAnalysisId]);
+  }, [imageUri, initialAnalysisId, userId]);
 
   const handleValidation = async () => {
     try {
@@ -85,8 +104,13 @@ export default function PredictionComponent({ route, navigation }) {
         return;
       }
 
+      const token = await AsyncStorage.getItem('userToken');
       await axios.post(`http://192.168.1.164:5000/validate/${analysisId}`, {
         treatment_validated: true
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       alert('Traitement validé avec succès');

@@ -1,18 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwtDecode from 'jwt-decode';
 
 export default function HistoryComponent({ navigation, route }) {
   const [history, setHistory] = useState([]);
-  const userId = 1; // Remplacer par l'ID de l'utilisateur connecté
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    fetchHistory();
-  }, [route.params?.refresh]);
+    const fetchUserId = async () => {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        const decodedToken = jwtDecode(token);
+        setUserId(decodedToken.userId);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
+  useEffect(() => {
+    if (userId) {
+      fetchHistory();
+    }
+  }, [userId, route.params?.refresh]);
 
   const fetchHistory = async () => {
     try {
-      const response = await axios.get(`http://192.168.1.164:5000/history/${userId}`);
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await axios.get(`http://192.168.1.164:5000/history/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       setHistory(response.data);
     } catch (error) {
       console.error("Error fetching history: ", error);

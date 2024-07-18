@@ -6,10 +6,11 @@ const FormData = require('form-data');
 const { PlantAnalysis } = require('../models');
 const path = require('path');
 const fs = require('fs');
+const authMiddleware = require('../middleware/auth');
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).send('No file uploaded.');
@@ -36,8 +37,8 @@ router.post('/', upload.single('image'), async (req, res) => {
 
     const image_url = `/uploads/${imageFilename}`;
 
-    // Assumer que user_id est fourni dans la requête
-    const user_id = req.body.user_id;
+    // Obtenir user_id à partir du token JWT
+    const user_id = req.user.userId;
 
     // Enregistrer l'analyse dans la base de données
     const analysis = await PlantAnalysis.create({

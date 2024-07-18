@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const sequelize = require('./models').sequelize;
 const path = require('path');
+const authMiddleware = require('./middleware/auth');
 
 const app = express();
 
@@ -15,9 +16,11 @@ app.use(express.json({ extended: false }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Define Routes
-app.use('/predict', require('./routes/predict'));
-app.use('/validate', require('./routes/validate'));
-app.use('/history', require('./routes/history'));
+app.use('/predict', authMiddleware, require('./routes/predict'));
+app.use('/validate', authMiddleware, require('./routes/validate'));
+app.use('/history', authMiddleware, require('./routes/history'));
+app.use('/register', require('./routes/register'));
+app.use('/login', require('./routes/login'));
 
 const PORT = process.env.PORT || 5000;
 
