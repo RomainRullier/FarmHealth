@@ -8,7 +8,8 @@ FarmHealth est un projet de fin d'études visant à développer une application 
 - **Application Mobile et Web** : Une application React Native pour prendre des photos de plantes et afficher les résultats des prédictions de manière intuitive.
 - **Interface Utilisateur** : Une interface simple et conviviale pour la prise de photos, la validation des traitements, et la consultation de l'historique.
 - **Stockage des Données** : Enregistrement des résultats de prédiction dans une base de données pour un suivi et une analyse ultérieure.
-- **Système de Traitement Automatisé** : Intégration avec un système physique pour l'application automatique de traitements en fonction des résultats des prédictions.
+- **Authentification des Utilisateurs** : Gestion des utilisateurs avec des fonctionnalités d'inscription et de connexion pour un suivi personnalisé des analyses de plantes.
+- **Envoi des Données au Raspberry Pi** : Transmission des données de traitement validées à un Raspberry Pi pour le contrôle des vannes.
 
 ## Technologies Utilisées
 
@@ -16,6 +17,7 @@ FarmHealth est un projet de fin d'études visant à développer une application 
 - **Back-End** : Node.js avec Express pour la gestion des API et la communication avec le modèle d'IA.
 - **Modèle d'IA** : TensorFlow Lite pour la détection des maladies des plantes.
 - **Base de Données** : PostgreSQL pour le stockage des résultats de prédiction.
+- **Authentification** : JSON Web Tokens (JWT) pour la gestion sécurisée des sessions utilisateur.
 - **Système de Contrôle** : Raspberry Pi pour le contrôle physique des vannes de traitement.
 
 ## Installation et Utilisation
@@ -27,6 +29,7 @@ FarmHealth est un projet de fin d'études visant à développer une application 
 - Base de données PostgreSQL
 - TensorFlow Lite installé pour l'exécution du modèle d'IA
 - Expo Go installé sur votre téléphone (disponible sur [App Store](https://apps.apple.com/app/expo-go/id982107779) et [Google Play](https://play.google.com/store/apps/details?id=host.exp.exponent))
+- Raspberry Pi pour le contrôle des vannes
 
 ### Installation
 
@@ -95,6 +98,7 @@ npx expo start
 4. **Valider un traitement :**
 
 - Si la plante est malade, vous pouvez valider le traitement recommandé directement depuis l'application.
+- Les données de traitement validées seront envoyées au Raspberry Pi pour le contrôle des vannes.
 
 5. **Consulter l'historique :**
 
