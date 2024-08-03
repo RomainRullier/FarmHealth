@@ -25,7 +25,7 @@ node_modules/
 .npm
 
 # dotenv environment variables file
-.env
+backend/.env*
 
 # IDEs and editors
 .idea/
@@ -56,7 +56,10 @@ mobile-app/web-build/
 Thumbs.db
 
 # Python virtual environment
-python-server/env/
+python-server/venv/
+
+# Python requirements
+python-server/requirements.txt
 
 # Python cache
 python-server/__pycache__/

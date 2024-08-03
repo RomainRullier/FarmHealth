@@ -70,7 +70,7 @@ node index.js
 
 ```bash
 cd server
-uvicorn app:app --reload
+uvicorn app:app --host 0.0.0.0 --port 5001 --reload
 ```
 
 7. **Démarrer l'application mobile :**

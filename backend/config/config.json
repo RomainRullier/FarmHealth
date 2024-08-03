@@ -1,9 +1,0 @@
-{
-  "development": {
-    "username": "farmuser",
-    "password": "farmuserpassword",
-    "database": "farmhealth",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
-  }
-}

@@ -4,6 +4,10 @@ const sequelize = require('./models').sequelize;
 const path = require('path');
 const authMiddleware = require('./middleware/auth');
 
+require('dotenv').config({
+  path: process.env.NODE_ENV === 'docker' ? '.env.docker' : '.env.development',
+});
+
 const app = express();
 
 // Sync Sequelize models

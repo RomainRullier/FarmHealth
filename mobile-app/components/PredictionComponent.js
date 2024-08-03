@@ -116,7 +116,7 @@ export default function PredictionComponent({ route, navigation }) {
       alert('Traitement validé avec succès');
       // Mise à jour de l'état de la prédiction pour refléter la validation du traitement
       setPrediction({ ...prediction, treatment_validated: true });
-      navigation.navigate('History', { refresh: true }); // Naviguer vers l'historique après validation et rafraîchir
+      navigation.navigate('ImagePicker', { refresh: true }); // Naviguer vers l'historique après validation et rafraîchir
     } catch (error) {
       console.error("Error during validation request: ", error);
     }
