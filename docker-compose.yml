@@ -8,41 +8,15 @@ services:
       - "5000:5000"
     environment:
       - NODE_ENV=docker
-      - DATABASE_URL=postgresql://farmuser:farmuserpassword@db:5432/farmhealth
-    depends_on:
-      - db
-
-  mobile-app:
-    build:
-      context: ./mobile-app
-    ports:
-      - "8081:8081"
-      - "19000:19000"
-      - "19001:19001"
-      - "19002:19002"
-    volumes:
-      - ./mobile-app:/usr/src/app
-    stdin_open: true
-    tty: true
-    environment:
-      - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.164
+      - DATABASE_URL=postgresql://farmadmin:Test123456789@farmhealth-database.postgres.database.azure.com:5432/postgres
+      - PREDICTION_SERVICE_URL=http://52.156.253.109:5001
 
   python-server:
     build:
       context: ./python-server
     ports:
       - "5001:5001"
-
-  db:
-    image: postgres:13
     environment:
-      POSTGRES_USER: farmuser
-      POSTGRES_PASSWORD: farmuserpassword
-      POSTGRES_DB: farmhealth
-    ports:
-      - "5432:5432"
-    volumes:
-      - db-data:/var/lib/postgresql/data
-
-volumes:
-  db-data:
+      - BACKEND_URL=http://backend:5000
+    depends_on:
+      - backend

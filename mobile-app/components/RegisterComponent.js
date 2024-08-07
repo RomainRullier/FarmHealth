@@ -10,7 +10,7 @@ export default function RegisterComponent({ navigation }) {
 
   const handleRegister = async () => {
     try {
-      const response = await axios.post('http://192.168.1.164:5000/register', { username, email, password });
+      const response = await axios.post('http://20.107.136.225:5000/register', { username, email, password });
       const { token } = response.data;
       await AsyncStorage.setItem('userToken', token);
       navigation.navigate('ImagePicker'); // Navigate to ImagePicker after successful registration

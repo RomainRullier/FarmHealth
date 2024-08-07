@@ -54,7 +54,7 @@ export default function PredictionComponent({ route, navigation }) {
 
       try {
         const token = await AsyncStorage.getItem('userToken');
-        const response = await axios.post('http://192.168.1.164:5000/predict', formData, {
+        const response = await axios.post('http://20.107.136.225:5000/predict', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${token}`
@@ -75,7 +75,7 @@ export default function PredictionComponent({ route, navigation }) {
       const fetchAnalysis = async () => {
         try {
           const token = await AsyncStorage.getItem('userToken');
-          const response = await axios.get(`http://192.168.1.164:5000/history/${userId}`, {
+          const response = await axios.get(`http://20.107.136.225:5000/history/${userId}`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -105,7 +105,7 @@ export default function PredictionComponent({ route, navigation }) {
       }
 
       const token = await AsyncStorage.getItem('userToken');
-      await axios.post(`http://192.168.1.164:5000/validate/${analysisId}`, {
+      await axios.post(`http://20.107.136.225:5000/validate/${analysisId}`, {
         treatment_validated: true
       }, {
         headers: {

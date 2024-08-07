@@ -9,7 +9,7 @@ export default function LoginComponent({ navigation }) {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.1.164:5000/login', { email, password }, {
+      const response = await axios.post('http://20.107.136.225:5000/login', { email, password }, {
         timeout: 5000 // Ajout d'un timeout pour éviter les requêtes trop longues
       });
       const { token } = response.data;

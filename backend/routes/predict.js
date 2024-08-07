@@ -22,7 +22,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       contentType: req.file.mimetype,
     });
 
-    const response = await axios.post('http://192.168.1.164:5001/predict', formData, {
+    const response = await axios.post(`${process.env.PREDICTION_SERVICE_URL}/predict`, formData, {
       headers: {
         ...formData.getHeaders(),
       },
