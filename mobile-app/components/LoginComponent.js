@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import axios from 'axios';
+import api from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginComponent({ navigation }) {
@@ -9,7 +9,7 @@ export default function LoginComponent({ navigation }) {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://20.107.136.225:5000/login', { email, password }, {
+      const response = await api.post('/login', { email, password }, {
         timeout: 5000 // Ajout d'un timeout pour éviter les requêtes trop longues
       });
       const { token } = response.data;

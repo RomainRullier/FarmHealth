@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import axios from 'axios';
+import api from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RegisterComponent({ navigation }) {
@@ -10,7 +10,7 @@ export default function RegisterComponent({ navigation }) {
 
   const handleRegister = async () => {
     try {
-      const response = await axios.post('http://20.107.136.225:5000/register', { username, email, password });
+      const response = await api.post('/register', { username, email, password });
       const { token } = response.data;
       await AsyncStorage.setItem('userToken', token);
       navigation.navigate('ImagePicker'); // Navigate to ImagePicker after successful registration

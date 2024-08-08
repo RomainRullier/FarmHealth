@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, Text, Button, StyleSheet, ScrollView, Platform } from 'react-native';
-import axios from 'axios';
+import api from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwtDecode from 'jwt-decode';
 
@@ -54,7 +54,7 @@ export default function PredictionComponent({ route, navigation }) {
 
       try {
         const token = await AsyncStorage.getItem('userToken');
-        const response = await axios.post('http://20.107.136.225:5000/predict', formData, {
+        const response = await api.post('/predict', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${token}`
@@ -75,7 +75,7 @@ export default function PredictionComponent({ route, navigation }) {
       const fetchAnalysis = async () => {
         try {
           const token = await AsyncStorage.getItem('userToken');
-          const response = await axios.get(`http://20.107.136.225:5000/history/${userId}`, {
+          const response = await api.get(`/history/${userId}`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -105,7 +105,7 @@ export default function PredictionComponent({ route, navigation }) {
       }
 
       const token = await AsyncStorage.getItem('userToken');
-      await axios.post(`http://20.107.136.225:5000/validate/${analysisId}`, {
+      await api.post(`/validate/${analysisId}`, {
         treatment_validated: true
       }, {
         headers: {

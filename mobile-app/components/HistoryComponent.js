@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import axios from 'axios';
+import api from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwtDecode from 'jwt-decode';
 
@@ -29,7 +29,7 @@ export default function HistoryComponent({ navigation, route }) {
   const fetchHistory = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get(`http://20.107.136.225:5000/history/${userId}`, {
+      const response = await api.get(`/history/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -43,9 +43,9 @@ export default function HistoryComponent({ navigation, route }) {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.historyItem}
-      onPress={() => navigation.navigate('Prediction', { imageUri: `http://20.107.136.225:5000${item.image_url}`, analysisId: item.id })}
+      onPress={() => navigation.navigate('Prediction', { imageUri: `${api.defaults.baseURL}${item.image_url}`, analysisId: item.id })}
     >
-      <Image source={{ uri: `http://20.107.136.225:5000${item.image_url}` }} style={styles.image} />
+      <Image source={{ uri: `${api.defaults.baseURL}${item.image_url}` }} style={styles.image} />
       <Text>Plant Type: {item.plant_type}</Text>
       <Text>Condition: {item.condition}</Text>
       {item.condition !== 'healthy' && (
