@@ -13,7 +13,7 @@ router.get('/:user_id', async (req, res) => {
 
     res.json(analyses);
   } catch (error) {
-    console.error('Error in /history route:', error.message); // Log the error
+    console.error('Error in /history route:', error.message);
     res.status(500).send(error.message);
   }
 });

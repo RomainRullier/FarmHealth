@@ -1,22 +1,20 @@
-# backend/Dockerfile
-
-# Use official Node.js image as base image
+# Utiliser une image officielle Node.js comme image de base
 FROM node:20
 
-# Set working directory
+# Définir le répertoire de travail dans le conteneur
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
+# Copier package.json et package-lock.json dans le conteneur
 COPY package*.json ./
 
-# Install dependencies
+# Installer les dépendances Node.js
 RUN npm install
 
-# Copy source files
+# Copier le reste du code source dans le conteneur
 COPY . .
 
-# Expose the port your app runs on
+# Exposez le port que l'application va utiliser
 EXPOSE 5000
 
-# Run the app using the wait-for-it script
+# Commande pour démarrer le serveur Express
 CMD ["node", "index.js"]

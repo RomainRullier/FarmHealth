@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, Text, Button, StyleSheet, ScrollView, Platform } from 'react-native';
+import { View, Image, Text, TouchableOpacity, StyleSheet, ScrollView, Platform, Alert } from 'react-native';
 import api from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwtDecode from 'jwt-decode';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function PredictionComponent({ route, navigation }) {
   const { imageUri, analysisId: initialAnalysisId } = route.params;
@@ -35,7 +36,6 @@ export default function PredictionComponent({ route, navigation }) {
 
       const formData = new FormData();
       if (Platform.OS === 'web') {
-        // Convertir l'URI en Blob pour le web
         try {
           const response = await fetch(imageUri);
           const blob = await response.blob();
@@ -60,9 +60,9 @@ export default function PredictionComponent({ route, navigation }) {
             'Authorization': `Bearer ${token}`
           },
         });
-        console.log('API Response:', response.data); // Log de la réponse API
-        setPrediction(response.data.prediction); // Stocker seulement l'objet prédiction
-        setAnalysisId(response.data.analysis.id); // Stocker l'ID de l'analyse courante
+        console.log('API Response:', response.data);
+        setPrediction(response.data.prediction);
+        setAnalysisId(response.data.analysis.id);
       } catch (error) {
         console.error("Error during prediction request: ", error);
       }
@@ -71,7 +71,6 @@ export default function PredictionComponent({ route, navigation }) {
     if (!initialAnalysisId && userId) {
       handlePrediction();
     } else if (initialAnalysisId && userId) {
-      // Fetch existing analysis data
       const fetchAnalysis = async () => {
         try {
           const token = await AsyncStorage.getItem('userToken');
@@ -113,10 +112,9 @@ export default function PredictionComponent({ route, navigation }) {
         }
       });
 
-      alert('Traitement validé avec succès');
-      // Mise à jour de l'état de la prédiction pour refléter la validation du traitement
+      Alert.alert('Succès', 'Traitement validé avec succès');
       setPrediction({ ...prediction, treatment_validated: true });
-      navigation.navigate('ImagePicker', { refresh: true }); // Naviguer vers l'historique après validation et rafraîchir
+      navigation.navigate('ImagePicker', { refresh: true });
     } catch (error) {
       console.error("Error during validation request: ", error);
     }
@@ -127,19 +125,28 @@ export default function PredictionComponent({ route, navigation }) {
       <Image source={{ uri: imageUri }} style={styles.image} />
       {prediction && (
         <View style={styles.predictionContainer}>
-          <Text style={styles.predictionTitle}>Prediction:</Text>
-          <Text>Plant Type: {prediction.plant_type}</Text>
-          <Text>Condition: {prediction.condition}</Text>
-          {prediction && prediction.condition !== "healthy" && !prediction.treatment_validated && (
+          <Text style={styles.predictionTitle}>Prédiction :</Text>
+          <Text style={styles.predictionText}>Type de plante : {prediction.plant_type}</Text>
+          <Text style={styles.predictionText}>Condition : {prediction.condition}</Text>
+          {prediction.condition !== "healthy" && !prediction.treatment_validated && (
             <>
-              <Button title="Appliquer le traitement recommandé" onPress={handleValidation} />
+              <TouchableOpacity onPress={handleValidation} style={styles.buttonContainer}>
+                <LinearGradient
+                  colors={['#43E97B', '#38F9D7']}
+                  style={styles.button}
+                  start={[0, 0]}
+                  end={[1, 1]}
+                >
+                  <Text style={styles.buttonText}>Appliquer le traitement recommandé</Text>
+                </LinearGradient>
+              </TouchableOpacity>
               <Text style={styles.treatmentNotApplied}>Traitement non-appliqué</Text>
             </>
           )}
           {prediction.condition === "healthy" && (
             <Text style={styles.noTreatment}>Aucun traitement recommandé</Text>
           )}
-          {prediction && prediction.condition !== 'healthy' && prediction.treatment_validated && (
+          {prediction.condition !== 'healthy' && prediction.treatment_validated && (
             <Text style={styles.treatmentApplied}>Traitement appliqué</Text>
           )}
         </View>
@@ -150,23 +157,33 @@ export default function PredictionComponent({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
+    backgroundColor: '#FFFFFF',
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
     marginTop: 20,
+    borderRadius: 10,
   },
   predictionContainer: {
     marginTop: 20,
     alignItems: 'center',
+    paddingHorizontal: 20,
   },
   predictionTitle: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#333333',
+  },
+  predictionText: {
+    fontSize: 18,
+    marginVertical: 5,
+    color: '#333333',
   },
   noTreatment: {
     marginTop: 20,
@@ -185,5 +202,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: 'red',
+  },
+  buttonContainer: {
+    width: '100%',
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginTop: 20,
+  },
+  button: {
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

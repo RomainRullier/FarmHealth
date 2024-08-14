@@ -1,11 +1,12 @@
 import React from 'react';
-import { Button, Alert } from 'react-native';
+import { TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function LogoutButton({ navigation }) {
   const handleLogout = async () => {
     await AsyncStorage.removeItem('userToken');
-    navigation.navigate('Login'); // Navigate to login screen after logout
+    navigation.navigate('Login');
   };
 
   const confirmLogout = () => {
@@ -20,5 +21,15 @@ export default function LogoutButton({ navigation }) {
     );
   };
 
-  return <Button title="Déconnexion" onPress={confirmLogout} />;
+  return (
+    <TouchableOpacity onPress={confirmLogout} style={styles.button}>
+      <Ionicons name="log-out-outline" size={24} color="#333" />
+    </TouchableOpacity>
+  );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    marginRight: 20,
+  },
+});

@@ -7,7 +7,7 @@ const authMiddleware = require('./middleware/auth');
 require('dotenv').config({
   path: process.env.NODE_ENV === 'docker' ? '.env.docker' : '.env.development',
 });
-console.log('PREDICTION_SERVICE_URL:', process.env.PREDICTION_SERVICE_URL); // Ajoutez cette ligne pour vérifier la valeur
+console.log('PREDICTION_SERVICE_URL:', process.env.PREDICTION_SERVICE_URL);
 
 
 const app = express();

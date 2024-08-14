@@ -2,6 +2,9 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { TouchableOpacity, StyleSheet, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import WelcomeComponent from './components/WelcomeComponent';
 import RegisterComponent from './components/RegisterComponent';
 import LoginComponent from './components/LoginComponent';
 import ImagePickerComponent from './components/ImagePickerComponent';
@@ -14,23 +17,44 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Welcome">
+        <Stack.Screen 
+          name="Welcome" 
+          component={WelcomeComponent} 
+          options={{ headerShown: false }} 
+        />
         <Stack.Screen 
           name="Register" 
           component={RegisterComponent} 
-          options={{ title: 'Inscription' }} 
+          options={({ navigation }) => ({
+            title: 'Inscription',
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <Ionicons name="arrow-back-outline" size={24} color="#333" />
+                <Text style={styles.backButtonText}>Retour</Text>
+              </TouchableOpacity>
+            ),
+          })} 
         />
         <Stack.Screen 
           name="Login" 
           component={LoginComponent} 
-          options={{ title: 'Connexion', headerLeft: null }} 
+          options={({ navigation }) => ({
+            title: 'Connexion',
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <Ionicons name="arrow-back-outline" size={24} color="#333" />
+                <Text style={styles.backButtonText}>Retour</Text>
+              </TouchableOpacity>
+            ),
+          })} 
         />
         <Stack.Screen 
           name="ImagePicker" 
           component={ImagePickerComponent} 
           options={({ navigation }) => ({
             title: 'Prendre une Photo',
-            headerLeft: null, // Disable back button
+            headerLeft: null,
             headerRight: () => <LogoutButton navigation={navigation} />,
           })} 
         />
@@ -39,6 +63,12 @@ export default function App() {
           component={PredictionComponent} 
           options={({ navigation }) => ({
             title: 'Résultats de la Prédiction',
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <Ionicons name="arrow-back-outline" size={24} color="#333" />
+                <Text style={styles.backButtonText}>Retour</Text>
+              </TouchableOpacity>
+            ),
             headerRight: () => <LogoutButton navigation={navigation} />,
           })} 
         />
@@ -47,6 +77,12 @@ export default function App() {
           component={HistoryComponent} 
           options={({ navigation }) => ({
             title: 'Historique des Analyses',
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <Ionicons name="arrow-back-outline" size={24} color="#333" />
+                <Text style={styles.backButtonText}>Retour</Text>
+              </TouchableOpacity>
+            ),
             headerRight: () => <LogoutButton navigation={navigation} />,
           })} 
         />
@@ -54,3 +90,16 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 20,
+  },
+  backButtonText: {
+    marginLeft: 5,
+    fontSize: 16,
+    color: '#333',
+  },
+});

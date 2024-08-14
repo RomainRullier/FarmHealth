@@ -53,7 +53,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
 
     res.json({ analysis, prediction: response.data });
   } catch (error) {
-    console.error('Error in /predict route:', error.message); // Log the error
+    console.error('Error in /predict route:', error.message);
     res.status(500).send(error.message);
   }
 });

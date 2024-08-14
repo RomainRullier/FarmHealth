@@ -26,8 +26,6 @@ FarmHealth est un projet de fin d'études visant à développer une application 
 
 - Node.js et npm installés
 - Expo CLI pour le développement avec React Native
-- Base de données PostgreSQL
-- TensorFlow Lite installé pour l'exécution du modèle d'IA
 - Expo Go installé sur votre téléphone (disponible sur [App Store](https://apps.apple.com/app/expo-go/id982107779) et [Google Play](https://play.google.com/store/apps/details?id=host.exp.exponent))
 - Raspberry Pi pour le contrôle des vannes
 
@@ -40,40 +38,14 @@ git clone https://github.com/RomainRullier/FarmHealth.git
 cd FarmHealth
 ```
 
-2. **Configurer la base de données PostgreSQL :**
-
-- Créer une base de données PostgreSQL.
-- Mettre à jour le fichier backend/config/config.json avec les informations de connexion à votre base de données.
-
-3. **Installer les dépendances du front-end :**
+2. **Installer les dépendances du front-end :**
 
 ```bash
 cd mobile-app
 npm install
 ```
 
-4. **Installer les dépendances du back-end :**
-
-```bash
-cd backend
-npm install
-```
-
-5. **Démarrer le serveur back-end :**
-
-```bash
-cd backend
-node index.js
-```
-
-6. **Démarrer le serveur de prédiction (Python) :**
-
-```bash
-cd server
-uvicorn app:app --host 0.0.0.0 --port 5001 --reload
-```
-
-7. **Démarrer l'application mobile :**
+3. **Démarrer l'application mobile :**
 
 ```bash
 cd mobile-app

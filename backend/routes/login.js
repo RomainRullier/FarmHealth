@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcryptjs'); // Utiliser bcryptjs
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
@@ -12,7 +12,7 @@ router.post('/', async (req, res) => {
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      console.log('Login attempt failed: User not found'); // Log
+      console.log('Login attempt failed: User not found');
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
 
     res.json({ token });
   } catch (error) {
-    console.error('Error in /login route:', error); // Log detailed error
+    console.error('Error in /login route:', error);
     res.status(500).send('Server error');
   }
 });

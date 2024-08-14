@@ -34,6 +34,48 @@ class_names = {
     35: 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 36: 'Tomato___Tomato_mosaic_virus', 37: 'Tomato___healthy'
 }
 
+# Dictionnaire de traduction des classes en français
+class_names_fr = {
+    'Apple': 'Pomme',
+    'Apple_scab': 'Tavelure du pommier',
+    'Black_rot': 'Pourriture noire',
+    'Cedar_apple_rust': 'Rouille du pommier de cèdre',
+    'healthy': 'sain',
+    'Blueberry': 'Myrtille',
+    'Cherry_(including_sour)': 'Cerise (y compris acide)',
+    'Powdery_mildew': 'Oïdium',
+    'Corn_(maize)': 'Maïs',
+    'Cercospora_leaf_spot Gray_leaf_spot': 'Tache grise des feuilles (Cercospora)',
+    'Common_rust_': 'Rouille commune',
+    'Northern_Leaf_Blight': 'Brûlure nordique des feuilles',
+    'Grape': 'Raisin',
+    'Black_rot': 'Pourriture noire',
+    'Esca_(Black_Measles)': 'Esca (rougeole noire)',
+    'Leaf_blight_(Isariopsis_Leaf_Spot)': 'Brûlure des feuilles (Tache des feuilles d’Isariopsis)',
+    'Orange': 'Orange',
+    'Haunglongbing_(Citrus_greening)': 'Huanglongbing (verdissement des agrumes)',
+    'Peach': 'Pêche',
+    'Bacterial_spot': 'Tache bactérienne',
+    'Pepper,_bell': 'Poivron',
+    'Potato': 'Pomme de terre',
+    'Early_blight': 'Brûlure précoce',
+    'Late_blight': 'Brûlure tardive',
+    'Raspberry': 'Framboise',
+    'Soybean': 'Soja',
+    'Squash': 'Courge',
+    'Strawberry': 'Fraise',
+    'Leaf_scorch': 'Brûlure des feuilles',
+    'Tomato': 'Tomate',
+    'Bacterial_spot': 'Tache bactérienne',
+    'Leaf_Mold': 'Moisi des feuilles',
+    'Septoria_leaf_spot': 'Tache des feuilles de Septoria',
+    'Spider_mites Two-spotted_spider_mite': 'Tétranyques à deux points',
+    'Target_Spot': 'Tache cible',
+    'Tomato_Yellow_Leaf_Curl_Virus': 'Virus de la feuille jaune enroulée de la tomate',
+    'Tomato_mosaic_virus': 'Virus de la mosaïque de la tomate'
+}
+
+
 def predict(image_bytes):
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
@@ -41,7 +83,7 @@ def predict(image_bytes):
         logging.error(f"Error opening image: {e}")
         raise e
 
-    img = img.resize((224, 224))  # Redimensionner selon les exigences de votre modèle
+    img = img.resize((224, 224))  # Redimensionner selon les exigences du modèle
     img_array = np.array(img) / 255.0  # Normaliser l'image
     img_array = np.expand_dims(img_array, axis=0)  # Ajouter la dimension batch
 
@@ -55,7 +97,15 @@ def predict(image_bytes):
     # Séparer le type de plante et la condition
     plant_type, condition = predicted_class_name.split('___')
     
-    return output_data[0].tolist(), plant_type, condition
+    # Traduire les noms des classes en français
+    plant_type_fr = class_names_fr.get(plant_type, plant_type)
+    condition_fr = class_names_fr.get(condition, condition)
+
+    # Log pour vérifier la traduction
+    logging.info(f"Plant type: {plant_type} -> {plant_type_fr}, Condition: {condition} -> {condition_fr}")
+    
+    return output_data[0].tolist(), plant_type_fr, condition_fr
+
 
 @app.post("/predict")
 async def predict_image(file: UploadFile = File(...)):
@@ -68,13 +118,13 @@ async def predict_image(file: UploadFile = File(...)):
                 "predictions": predictions,
                 "plant_type": plant_type,
                 "condition": condition,
-                "classes": class_names
+                "classes": class_names  # Vous pouvez garder ce dictionnaire si besoin, sinon le retirer
             })
         else:
             logging.error("Uploaded file is not an image")
             return JSONResponse(content={"error": "File is not an image."}, status_code=400)
     except Exception as e:
-        logging.error(f"Error processing prediction: {e}")  # Log the error
+        logging.error(f"Error processing prediction: {e}")
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 if __name__ == '__main__':
