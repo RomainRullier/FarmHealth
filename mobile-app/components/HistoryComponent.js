@@ -50,8 +50,10 @@ export default function HistoryComponent({ navigation, route }) {
       <Image source={{ uri: `${api.defaults.baseURL}${item.image_url}` }} style={styles.image} />
       <Text style={styles.plantType}>Type: {item.plant_type}</Text>
       <Text style={styles.condition}>Condition: {item.condition}</Text>
-      {item.condition !== 'healthy' && (
-        <Text style={styles.treatment}>Traitement appliqué: {item.treatment_validated ? 'Oui' : 'Non'}</Text>
+      {item.condition !== 'saine' && (
+        <Text style={[styles.treatment, item.treatment_validated ? styles.treatmentApplied : styles.treatmentNotApplied]}>
+          {item.treatment_validated ? 'Traitement appliqué' : 'Pas de traitement appliqué'}
+        </Text>
       )}
       <Text style={styles.date}>Date: {new Date(item.createdAt).toLocaleString()}</Text>
     </TouchableOpacity>
@@ -122,8 +124,13 @@ const styles = StyleSheet.create({
   },
   treatment: {
     fontSize: 14,
-    color: 'red',
     marginBottom: 10,
+  },
+  treatmentApplied: {
+    color: 'green',
+  },
+  treatmentNotApplied: {
+    color: 'red',
   },
   date: {
     fontSize: 12,

@@ -40,7 +40,7 @@ class_names_fr = {
     'Apple_scab': 'Tavelure du pommier',
     'Black_rot': 'Pourriture noire',
     'Cedar_apple_rust': 'Rouille du pommier de cèdre',
-    'healthy': 'sain',
+    'healthy': 'saine',
     'Blueberry': 'Myrtille',
     'Cherry_(including_sour)': 'Cerise (y compris acide)',
     'Powdery_mildew': 'Oïdium',

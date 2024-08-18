@@ -128,7 +128,7 @@ export default function PredictionComponent({ route, navigation }) {
           <Text style={styles.predictionTitle}>Prédiction :</Text>
           <Text style={styles.predictionText}>Type de plante : {prediction.plant_type}</Text>
           <Text style={styles.predictionText}>Condition : {prediction.condition}</Text>
-          {prediction.condition !== "healthy" && !prediction.treatment_validated && (
+          {prediction.condition !== "saine" && !prediction.treatment_validated && (
             <>
               <TouchableOpacity onPress={handleValidation} style={styles.buttonContainer}>
                 <LinearGradient
@@ -143,10 +143,10 @@ export default function PredictionComponent({ route, navigation }) {
               <Text style={styles.treatmentNotApplied}>Traitement non-appliqué</Text>
             </>
           )}
-          {prediction.condition === "healthy" && (
+          {prediction.condition === "saine" && (
             <Text style={styles.noTreatment}>Aucun traitement recommandé</Text>
           )}
-          {prediction.condition !== 'healthy' && prediction.treatment_validated && (
+          {prediction.condition !== 'saine' && prediction.treatment_validated && (
             <Text style={styles.treatmentApplied}>Traitement appliqué</Text>
           )}
         </View>
